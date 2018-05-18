@@ -6,11 +6,11 @@ class Player:
     def __init__(self):
         self.inventory = [items.Rock(),
                           items.Dagger(),
-                          'Gold(5)',
                           items.CrustyBread()]
         self.x = 1
         self.y = 2
         self.hp = 100
+        self.gold = 5
 
     def print_inventory(self):
         print('Inventory:')
@@ -18,6 +18,7 @@ class Player:
             print('* ' + str(item))
         best_weapon = self.most_powerful_weapon()
         print('Your best weapon is your {}.'.format(best_weapon))
+        print('Gold: {}'.format(self.gold))
 
     def heal(self):
         consumables = [item for item in self.inventory if isinstance(item, items.Consumable)]
@@ -82,6 +83,10 @@ class Player:
             print('You killed {}!'.format(enemy.name))
         else:
             print('{}\'s health is now {}.'.format(enemy.name, enemy.hp))
+
+    def trade(self):
+        room = world.tile_at(self.x, self.y)
+        room.check_if_trade(self)
         
 
 

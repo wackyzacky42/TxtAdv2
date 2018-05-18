@@ -1,5 +1,6 @@
 import random
 import enemies
+import npc
 
 
 class MapTile:
@@ -69,6 +70,58 @@ class VictoryTile(MapTile):
         Victory is yours!
         '''
 
+class TraderTile(MapTile):
+    def __init__(self, x, y):
+        self.trader = npc.Trader()
+        super().__init__(x, y)
+
+    def trade(self, buyer, seller):
+        for i, item in enumerate(seller.inventory, 1):
+            print('{}. {} - {} Gold'.format(i, item.name, item.value))
+        while True:
+            user_input = input('Choose an item or Press Q to exit: ')
+            if user_input in ['q', 'Q']:
+                return
+            else:
+                try:
+                    choice = int(user_input)
+                    to_swap = seller.inventory[choice - 1]
+                    self.swap(seller, buyer, to_swap)
+                except ValueError:
+                    print('Invalid choice!')
+
+    def swap(self, seller, buyer, item):
+        if item.value > buyer.gold:
+            print('That\'s too expensive')
+            return
+        seller.inventory.remove(item)
+        buyer.inventory.append(item)
+        seller.gold = seller.gold + item.value
+        buyer.gold = buyer.gold - item.value
+        print('Trade complete!')
+
+    def check_if_trade(self, player):
+        while True:
+            print('Would you like the (B)uy, (S)ell, or (Q)uit?')
+            user_input = input()
+            if user_input in ['q', 'Q']:
+                return
+            elif user_input in ['b', 'B']:
+                print('Here\'s what\'s available to buy: ')
+                self.trade(buyer=player, seller=self.trader)
+            elif user_input in ['s', 'S']"
+                print('Here\'s what\'s available to sell: ')
+                self.trade(buyer=self.trader, seller=player)
+            else:
+                print('Invalid choice!')
+
+    def intro_text(self):
+        return '''
+        A frail not-quite-human, not-quite-creature squats in the corner
+        clinking his gold coins together. He looks willing to trade.
+        '''
+        
+
 world_dsl = '''
 |  |VT|  |
 |  |EN|  |
@@ -97,6 +150,9 @@ tile_type_dict = {'VT': VictoryTile,
                   'ST': StartTile,
                   '  ': None}
 
+
+
+
 def tile_at(x,y):
     if x < 0 or y < 0:
         return None
@@ -104,6 +160,10 @@ def tile_at(x,y):
         return world_map[y][x]
     except IndexError:
         return None
+
+
+
+
 
 def parse_world_dsl():
     if not is_dsl_valid(world_dsl):
