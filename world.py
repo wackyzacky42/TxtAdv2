@@ -61,6 +61,9 @@ class EnemyTile(MapTile):
       
 
 class VictoryTile(MapTile):
+    def modify_player(self, player):
+        player.victory = True        
+
     def intro_text(self):
         return '''
         You see a bright light in the distance...
@@ -71,7 +74,7 @@ class VictoryTile(MapTile):
         '''
 
 class FindGoldTile(MapTile):
-    def __init__(self):
+    def __init__(self, x, y):
         self.gold = random.randint(1, 50)
         self.gold_claimed = False
         super().__init__(x, y)

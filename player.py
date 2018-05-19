@@ -9,9 +9,12 @@ class Player:
                           items.CrustyBread()]
         self.x = world.start_tile_location[0]
         self.y = world.start_tile_location[1]
-        self.y = 2
         self.hp = 100
         self.gold = 5
+        self.victory = False
+
+    def is_alive(self):
+        return self.hp > 0
 
     def print_inventory(self):
         print('Inventory:')
